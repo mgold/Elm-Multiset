@@ -1,0 +1,13 @@
+{
+    "version": "1.0.0",
+    "summary": "A collection of counted elements",
+    "repository": "https://github.com/mgold/Elm-Multiset.get",
+    "license": "BSD3",
+    "source-directories": [
+        "."
+    ],
+    "exposed-modules": ["Multiset"],
+    "dependencies": {
+        "elm-lang/core": "1.0.0 <= v < 2.0.0"
+    }
+}
