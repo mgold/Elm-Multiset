@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "A collection of counted elements",
-    "repository": "https://github.com/mgold/Elm-Multiset.get",
+    "repository": "https://github.com/mgold/Elm-Multiset.git",
     "license": "BSD3",
     "source-directories": [
         "."
