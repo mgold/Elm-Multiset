@@ -4,12 +4,10 @@ module Multiset where
 Multiset special is that you never have to worry about Maybe values; instead
 you'll get zero. This simplifies the insert and query functions.
 
-If a key's count becomes zero, it is stored explicitly like any other count, so
-it'll show up in `map`, `filter`, and the like. When using `get` or `equals`, it
-doesn't matter whether the count was stored as zero or just now popped into
-existence.
-
-Multisets support negative counts.
+Multisets do not store counts of zero explicitly, so don't expect them in `map`,
+`filter`, `counts`, and the like. You should equate multisets with the given
+`equals` function and not the built-in `(==)`. Multisets support negative
+counts.
 
 # Definition
 @docs Multiset
@@ -49,7 +47,7 @@ singleton x = Dict.singleton x 1
 
 {-| Set the count of a key to a new integer, regardness of what it used to be. -}
 set : comparable -> Int -> Multiset comparable -> Multiset comparable
-set = Dict.insert
+set x c ms = if c == 0 then Dict.remove x ms else Dict.insert x c ms
 
 {-| Add a key to the multiset, incrementing its count by one. -}
 add : comparable -> Multiset comparable -> Multiset comparable
@@ -62,7 +60,8 @@ remove x = update x (\c -> c - 1)
 {-| Update the count of a comparable using the given function. It is safe to
 return zero. -}
 update : comparable -> (Int -> Int) -> Multiset comparable -> Multiset comparable
-update x f = Dict.update x <| Maybe.withDefault 0 >> f >> Just
+update x f = let toMaybe c = if c == 0 then Nothing else Just c
+             in Dict.update x <| Maybe.withDefault 0 >> f >> toMaybe
 
 {-| Get the count of a key, which may be zero. -}
 get : comparable -> Multiset comparable -> Int
@@ -71,7 +70,7 @@ get x ms = Dict.get x ms |> Maybe.withDefault 0
 {- Map over a multiset, changing the counts of the keys. It is safe to return
 zero. -}
 map : (comparable -> Int -> Int) -> Multiset comparable -> Multiset comparable
-map = Dict.map
+map f ms = Dict.map f ms |> Dict.filter (\_ i -> i /= 0)
 
 {- Map over two multisets, producing a new multiset. It is safe to return zero.
 You can use this function to add two multisets: `map2 (always (+))`. Similar
@@ -84,18 +83,18 @@ map2 f a b = let keySet = Dict.keys >> Set.fromList
              in Dict.fromList assocList'
 
 {- Equate two multisets. You should use this function instead of `(==)`, which
-equates the tree representation rather than the abstract container.
-Additionally, this function considers explicit counts of zero equal to missing
-keys. You can also use this function and `empty` for empty checking.
+equates the tree representation rather than the abstract container. You can also
+use this function and `empty` for empty checking.
 
     empty `equals` (fromAssocList [("foo", 0)]) == True
     empty `equals` singleton "bar" == False
     (fromList [1,2,1]) `equals` (fromList [1,1,2]) == True
+
 -}
 equals : Multiset comparable -> Multiset comparable -> Bool
 equals a b = let keySet = Dict.keys >> Set.fromList
                  allKeys = Set.union (keySet a) (keySet b) |> Set.toList
-             in List.all (\x -> get x a  == get x b) allKeys
+             in List.all (\x -> Dict.get x a  == Dict.get x b) allKeys
 
 {-| Get all of the keys in a multiset. -}
 keys : Multiset comparable -> List comparable
@@ -115,7 +114,7 @@ fromList = List.foldl add empty
 
 {-| Convert an association list of key-count pairs into a multiset. -}
 fromAssocList : List (comparable, Int) -> Multiset comparable
-fromAssocList = Dict.fromList
+fromAssocList = List.filter (\p -> snd p /= 0) >> Dict.fromList
 
 {-| Fold over the key-count pairs in a dictionary, in order from lowest key to
 highest key. -}
