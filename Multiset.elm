@@ -91,10 +91,11 @@ use this function and `empty` for empty checking.
     (fromList [1,2,1]) `equals` (fromList [1,1,2]) == True
 
 -}
+-- Considers Just 0 == Nothing, but Just 0 should never happen
 equals : Multiset comparable -> Multiset comparable -> Bool
 equals a b = let keySet = Dict.keys >> Set.fromList
                  allKeys = Set.union (keySet a) (keySet b) |> Set.toList
-             in List.all (\x -> Dict.get x a  == Dict.get x b) allKeys
+             in List.all (\x -> get x a == get x b) allKeys
 
 {-| Get all of the keys in a multiset. -}
 keys : Multiset comparable -> List comparable
@@ -112,9 +113,10 @@ toList = Dict.toList
 fromList : List comparable -> Multiset comparable
 fromList = List.foldl add empty
 
-{-| Convert an association list of key-count pairs into a multiset. -}
+{-| Convert an association list of key-count pairs into a multiset. It is safe
+to have some counts be zero (but it's pointless to hard-code any zeroes).-}
 fromAssocList : List (comparable, Int) -> Multiset comparable
-fromAssocList = List.filter (\p -> snd p /= 0) >> Dict.fromList
+fromAssocList = List.filter (\a -> snd a /= 0) >> Dict.fromList
 
 {-| Fold over the key-count pairs in a dictionary, in order from lowest key to
 highest key. -}

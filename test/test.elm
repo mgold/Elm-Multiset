@@ -22,7 +22,8 @@ zeroRemoval = Test.suite "zero is removed by"
     [ nativeEquals "remove"  M.empty (M.singleton k |> M.remove k)
     , nativeEquals "set"  M.empty (M.singleton k |> M.set k 0)
     , nativeEquals "update"  M.empty (M.singleton k |> M.update k (always 0))
-    , nativeEquals "map"  M.empty (M.singleton k |> M.map (always <| always 0))
+    , nativeEquals "map"  M.empty (M.singleton k |> M.map (\_ _->0))
+    , nativeEquals "map2"  M.empty (M.map2 (\_ _ _->0) (M.singleton k) (M.singleton k1))
     ]
 
 docsExamples = Test.suite "Examples from the docs"
