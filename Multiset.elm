@@ -67,12 +67,12 @@ update x f = let toMaybe c = if c == 0 then Nothing else Just c
 get : comparable -> Multiset comparable -> Int
 get x ms = Dict.get x ms |> Maybe.withDefault 0
 
-{- Map over a multiset, changing the counts of the keys. It is safe to return
+{-| Map over a multiset, changing the counts of the keys. It is safe to return
 zero. -}
 map : (comparable -> Int -> Int) -> Multiset comparable -> Multiset comparable
 map f ms = Dict.map f ms |> Dict.filter (\_ i -> i /= 0)
 
-{- Map over two multisets, producing a new multiset. It is safe to return zero.
+{-| Map over two multisets, producing a new multiset. It is safe to return zero.
 You can use this function to add two multisets: `map2 (always (+))`. Similar
 approaches will substract or find the max or min of multisets. -}
 map2 : (comparable -> Int -> Int-> Int) -> Multiset comparable -> Multiset comparable -> Multiset comparable
@@ -82,7 +82,7 @@ map2 f a b = let keySet = Dict.keys >> Set.fromList
                  assocList' = List.filter (\(x,c) -> c /= 0) assocList
              in Dict.fromList assocList'
 
-{- Equate two multisets. You should use this function instead of `(==)`, which
+{-| Equate two multisets. You should use this function instead of `(==)`, which
 equates the tree representation rather than the abstract container. You can also
 use this function and `empty` for empty checking.
 
