@@ -3,16 +3,14 @@ module Test where
 import List
 
 import Multiset as M
-import ElmTest.Test as Test
-import ElmTest.Assertion as Assert
-import ElmTest.Runner.Element as Runner
+import ElmTest as Test
 
-equals a b = Test.test "Multisets are equal" <| Assert.assert <| M.equals a b
+equals a b = Test.test "Multisets are equal" <| Test.assert <| M.equals a b
 
-nativeEquals s a b = Test.test s <| Assert.assertEqual a b
+nativeEquals s a b = Test.test s <| Test.assertEqual a b
 
 notEquals a b = Test.test "Multiset are NOT equal" <|
-    Assert.assert <| not <| M.equals a b
+    Test.assert <| not <| M.equals a b
 
 k = "foo"
 k1 = "bar"
@@ -61,4 +59,4 @@ maps = Test.suite "Maps"
 
 allTests = Test.suite "All Tests" [zeroRemoval, docsExamples, lists, maps]
 
-main = Runner.runDisplay allTests
+main = Test.elementRunner allTests

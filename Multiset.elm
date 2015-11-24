@@ -9,6 +9,8 @@ Multisets do not store counts of zero explicitly, so don't expect them in `map`,
 `equals` function and not the built-in `(==)`. Multisets support negative
 counts.
 
+**NOTICE:** This package is being renamed `mgold/elm-multiset`, lowercase, for compatibility.
+
 # Definition
 @docs Multiset
 
