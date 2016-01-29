@@ -1,6 +1,11 @@
-module Test where
+module Test (main) where
+
+{-| Tests for elm-multiset.
+@docs main
+-}
 
 import List
+import Graphics.Element exposing (Element)
 
 import Multiset as M
 import ElmTest as Test
@@ -59,4 +64,6 @@ maps = Test.suite "Maps"
 
 allTests = Test.suite "All Tests" [zeroRemoval, docsExamples, lists, maps]
 
+{-| -}
+main : Element
 main = Test.elementRunner allTests
